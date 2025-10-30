@@ -7,19 +7,19 @@ import (
 	"encoding/base64"
 )
 
-type TYRSA rsa.PrivateKey
+type RSA rsa.PrivateKey
 
-func NewTYRSA() *TYRSA {
+func NewRSA() *RSA {
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		panic(err)
 	}
 	privateKey.E = 0x010001
 
-	return (*TYRSA)(privateKey)
+	return (*RSA)(privateKey)
 }
 
-func (tyr *TYRSA) PublicKeyToSPKI() string {
+func (tyr *RSA) PublicKeyToSPKI() string {
 	spkiBytes, err := x509.MarshalPKIXPublicKey(&tyr.PublicKey)
 	if err != nil {
 		panic(err)
@@ -27,6 +27,6 @@ func (tyr *TYRSA) PublicKeyToSPKI() string {
 	return base64.StdEncoding.EncodeToString(spkiBytes)
 }
 
-func (tyr *TYRSA) Decrypt(ciphertext []byte) ([]byte, error) {
+func (tyr *RSA) Decrypt(ciphertext []byte) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, (*rsa.PrivateKey)(tyr), ciphertext)
 }

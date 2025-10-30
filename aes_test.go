@@ -27,7 +27,7 @@ func TestDecrypt(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dat, err := NewTYAES(key[:]).Decrypt(d)
+	dat, err := NewAES(key[:]).Decrypt(d)
 	if err != nil {
 		t.Fatal(err)
 	}

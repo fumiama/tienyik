@@ -33,7 +33,7 @@ func TestRSANegotiationEncKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tyr := (*TYRSA)(k.(*rsa.PrivateKey))
+	tyr := (*RSA)(k.(*rsa.PrivateKey))
 	tyr.E = 0x010001
 
 	w := bytes.NewBuffer(make([]byte, 0, 1024))
@@ -86,7 +86,7 @@ func TestRSANegotiationEncKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err = NewTYAES([]byte(aesk)).Decrypt(v)
+	v, err = NewAES([]byte(aesk)).Decrypt(v)
 	if err != nil {
 		t.Fatal(err)
 	}

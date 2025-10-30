@@ -10,9 +10,9 @@ const (
 	ETPYE_AES_CBC = "2"
 )
 
-type TYAES [32]byte
+type AES [32]byte
 
-func NewTYAES(rawKey []byte) (tya TYAES) {
+func NewAES(rawKey []byte) (tya AES) {
 	if len(rawKey) != 32 {
 		panic("len(key) must == 32")
 	}
@@ -40,7 +40,7 @@ func pkcs7Unpadding(data []byte) []byte {
 	return data[:len(data)-padding]
 }
 
-func (tya TYAES) Encrypt(b []byte) []byte {
+func (tya AES) Encrypt(b []byte) []byte {
 	blk, err := aes.NewCipher(tya[:])
 	if err != nil {
 		panic(err)
@@ -55,7 +55,7 @@ func (tya TYAES) Encrypt(b []byte) []byte {
 	return ciphertext
 }
 
-func (tya TYAES) Decrypt(b []byte) ([]byte, error) {
+func (tya AES) Decrypt(b []byte) ([]byte, error) {
 	blk, err := aes.NewCipher(tya[:])
 	if err != nil {
 		return nil, err
