@@ -3,7 +3,6 @@ package auth
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"encoding/base64"
 	"testing"
 
 	"github.com/fumiama/tienyik"
@@ -32,23 +31,8 @@ func TestNegotiationEncKey(t *testing.T) {
 	t.Logf("EncData: %s", r.EncData)
 	t.Logf("EncKey: %s", r.EncKey)
 
-	v, err := base64.StdEncoding.DecodeString(r.EncKey)
+	_, err = r.Unwrap(tyr)
 	if err != nil {
 		t.Fatal(err)
 	}
-	aesk, err := tyr.Decrypt(v)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(string(aesk))
-
-	v, err = base64.StdEncoding.DecodeString(r.EncData)
-	if err != nil {
-		t.Fatal(err)
-	}
-	v, err = tienyik.NewAES([]byte(aesk)).Decrypt(v)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(string(v))
 }

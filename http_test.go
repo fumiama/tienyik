@@ -1,11 +1,9 @@
-package textio
+package tienyik
 
 import (
 	"encoding/binary"
 	"net/url"
 	"testing"
-
-	"github.com/fumiama/tienyik"
 )
 
 func TestEUrlParams(t *testing.T) {
@@ -21,11 +19,12 @@ func TestEUrlParams(t *testing.T) {
 		binary.BigEndian.PutUint32(key[i*4:(i+1)*4], k)
 	}
 	t.Log(string(key[:])) // wxdispbis8txuueo26ffs2veqs18sism
-	tya := tienyik.NewAES(key[:])
-	params := EUrlParams(&tya, url.Values{
+	tya := NewAES(key[:])
+	params := tya.EUrlParams(url.Values{
 		"moduleCode": {"DESKTOP_MSGCENTER"},
 	})
-	q, err := ParseQuery(&tya, params)
+	t.Log(params)
+	q, err := tya.ParseQuery(params)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +47,7 @@ func TestEUrlParamsMultiple(t *testing.T) {
 	for i, k := range rawkey {
 		binary.BigEndian.PutUint32(key[i*4:(i+1)*4], k)
 	}
-	tya := tienyik.NewAES(key[:])
+	tya := NewAES(key[:])
 
 	testCases := []struct {
 		name     string
@@ -103,8 +102,8 @@ func TestEUrlParamsMultiple(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			params := EUrlParams(&tya, tc.params)
-			q, err := ParseQuery(&tya, params)
+			params := tya.EUrlParams(tc.params)
+			q, err := tya.ParseQuery(params)
 			if err != nil {
 				t.Fatal(err)
 			}

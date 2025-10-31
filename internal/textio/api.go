@@ -1,12 +1,8 @@
 package textio
 
 import (
-	"errors"
-	"net/url"
 	"runtime"
 	"strings"
-
-	"github.com/fumiama/tienyik"
 )
 
 func API() string {
@@ -41,30 +37,4 @@ func API() string {
 	sb.WriteString(strings.ToLower(p[:1]))
 	sb.WriteString(p[1:])
 	return sb.String()
-}
-
-func EUrlParams(tya *tienyik.AES, params url.Values) string {
-	return url.Values{
-		FuncName(1, true): {BytesToString(tya.Encrypt(
-			StringToBytes(params.Encode()),
-		))},
-	}.Encode()
-}
-
-func ParseQuery(tya *tienyik.AES, eparams string) (url.Values, error) {
-	q, err := url.ParseQuery(eparams)
-	if err != nil {
-		return nil, err
-	}
-	if len(q) != 1 {
-		return nil, errors.New("len(q) must be 1")
-	}
-	for _, v := range q {
-		dec, err := tya.Decrypt(StringToBytes(v[0]))
-		if err != nil {
-			return nil, err
-		}
-		return url.ParseQuery(BytesToString(dec))
-	}
-	panic("unexpected")
 }
