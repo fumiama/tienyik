@@ -7,18 +7,36 @@ import (
 	"strings"
 )
 
-const Version = "103010001"
+const (
+	Version    = 103010001
+	AppVersion = "3.1.0"
+)
 
 const (
-	DeviceTypePC  = "25"
-	DeviceTypeMAC = "45"
-	DeviceTypeWEB = "60"
+	DeviceTypePC  = 25
+	DeviceTypeMAC = 45
+	DeviceTypeWEB = 60
 )
 
 const (
 	AppModelTOC   = "1"
 	AppModelTOB   = "2"
 	AppModelPHONE = "3"
+)
+
+const (
+	DeviceNameEdge = "Edge浏览器"
+)
+
+// alos sysVersion
+const (
+	DeviceModelMacOS = "Macintosh; Intel Mac OS X 10_15_7"
+)
+
+const (
+	ArchX86 = "2001"
+	ArchARM = "2002"
+	ArchHW  = "2003"
 )
 
 func NewDeviceCode() string {

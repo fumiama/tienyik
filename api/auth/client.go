@@ -94,11 +94,11 @@ type RequestLogin struct {
 	ChallengeID    string `form:"challengeId"`
 	DeviceCode     string `form:"deviceCode"`
 	DeviceName     string `form:"deviceName"`
-	DeviceType     string `form:"deviceType"`
+	DeviceType     uint64 `form:"deviceType"`
 	DeviceModel    string `form:"deviceModel"`
 	AppVersion     string `form:"appVersion"`
 	SysVersion     string `form:"sysVersion"`
-	ClientVersion  string `form:"clientVersion"`
+	ClientVersion  uint64 `form:"clientVersion"`
 }
 
 type ResponseLogin struct {
@@ -135,6 +135,8 @@ type ResponseLogin struct {
 func (r *ResponseLogin) SetClient(cli *hcli.Client) {
 	cli.Tenantid = strconv.FormatInt(r.TenantID, 10)
 	cli.Usereid = r.UserEid
+	cli.SetSecretKey(r.SecretKey)
+	cli.SetTimestamp(r.Timestamp)
 }
 
 func Login(tya *tienyik.AES, cli *hcli.Client, r *RequestLogin) (*ResponseLogin, error) {
@@ -147,4 +149,11 @@ func Login(tya *tienyik.AES, cli *hcli.Client, r *RequestLogin) (*ResponseLogin,
 	}
 	defer resp.Body.Close()
 	return hson.Unmarshal[*ResponseLogin](tya, resp.Body)
+}
+
+func Logout(tya *tienyik.AES, cli *hcli.Client) error {
+	_, err := cli.Post(
+		textio.API(), "", nil,
+	)
+	return err
 }

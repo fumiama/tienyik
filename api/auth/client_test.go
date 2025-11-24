@@ -3,9 +3,12 @@ package auth
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"os"
 	"testing"
 
 	"github.com/fumiama/tienyik"
+	"github.com/fumiama/tienyik/api/cdserv"
+	"github.com/fumiama/tienyik/hcli"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,6 +35,42 @@ func TestNegotiationEncKey(t *testing.T) {
 	t.Logf("EncKey: %s", r.EncKey)
 
 	_, err = r.Unwrap(tyr)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLogin(t *testing.T) {
+	cli := hcli.NewClient()
+	sd, err := cdserv.GetServData()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("get serv data:", sd)
+	x, err := GenChallengeData(nil, cli)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sd.SetClient(cli)
+	rsp, err := Login(nil, cli, &RequestLogin{
+		UserAccount:    os.Getenv("TYUSR"),
+		Password:       tienyik.ChallengePassword(os.Getenv("TYPWD"), x.ChallengeCode),
+		SHA256Password: tienyik.ChallengeSHA256Password(os.Getenv("TYPWD"), x.ChallengeCode),
+		ChallengeID:    x.ChallengeID,
+		DeviceCode:     cli.Devicecode,
+		DeviceName:     tienyik.DeviceNameEdge,
+		DeviceType:     cli.Devicetype,
+		DeviceModel:    tienyik.DeviceModelMacOS,
+		AppVersion:     tienyik.AppVersion,
+		SysVersion:     tienyik.DeviceModelMacOS,
+		ClientVersion:  cli.Version,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(rsp)
+	rsp.SetClient(cli)
+	err = Logout(nil, cli)
 	if err != nil {
 		t.Fatal(err)
 	}

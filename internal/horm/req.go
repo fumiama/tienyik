@@ -3,6 +3,7 @@ package horm
 import (
 	"net/url"
 	"reflect"
+	"strconv"
 
 	"github.com/fumiama/tienyik"
 	"github.com/fumiama/tienyik/internal/textio"
@@ -22,8 +23,13 @@ func Marshal(tya *tienyik.AES, x any) []byte {
 			continue
 		}
 
-		if field.Kind() == reflect.String {
+		switch field.Kind() {
+		case reflect.String:
 			q.Set(formTag, field.String())
+		case reflect.Uint64, reflect.Uint32, reflect.Uint16, reflect.Uint8, reflect.Uint, reflect.Uintptr:
+			q.Set(formTag, strconv.FormatUint(field.Uint(), 10))
+		case reflect.Int64, reflect.Int32, reflect.Int16, reflect.Int8, reflect.Int:
+			q.Set(formTag, strconv.FormatInt(field.Int(), 10))
 		}
 	}
 
