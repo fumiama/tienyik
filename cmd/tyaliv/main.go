@@ -150,7 +150,11 @@ RECONN:
 		}
 	}()
 
+	errcnt := 0
 	for {
+		if errcnt > 16 {
+			goto RECONN
+		}
 		select {
 		case <-t.C:
 			log.Infoln("start refreshing...")
@@ -163,7 +167,8 @@ RECONN:
 			s, err := desktop.State(nil, cli, reqs)
 			if err != nil {
 				log.Warnln("get state err:", err)
-				goto RECONN
+				errcnt++
+				time.Sleep(time.Minute)
 			}
 			for _, x := range s {
 				log.Infof("%s [%s]%s status is %s", x.ObjID, mp[x.ObjID][0], x.DesktopState)
@@ -186,7 +191,8 @@ RECONN:
 				})
 				if err != nil {
 					log.Warnln("connect err:", err)
-					goto RECONN
+					errcnt++
+					time.Sleep(time.Minute)
 				}
 			}
 		case <-mainStopCh:
